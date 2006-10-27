@@ -1,0 +1,59 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<HEAD></HEAD><HTML><BODY>
+<UL>
+<LI> <OBJECT type="text/sitemap">
+<param name="Name" value="Package cgh:  Contents">
+<param name="Local" value="00Index.html">
+</OBJECT>
+<LI> <OBJECT type="text/sitemap">
+<param name="Name" value="Package cgh:  R objects">
+</OBJECT>
+<UL>
+<LI> <OBJECT type="text/sitemap">
+<param name="Name" value="sw">
+<param name="Local" value="sw.html">
+</OBJECT>
+<LI> <OBJECT type="text/sitemap">
+<param name="Name" value="sw.perm.test">
+<param name="Local" value="sw.perm.test.html">
+</OBJECT>
+<LI> <OBJECT type="text/sitemap">
+<param name="Name" value="sw.plot">
+<param name="Local" value="sw.plot.html">
+</OBJECT>
+<LI> <OBJECT type="text/sitemap">
+<param name="Name" value="sw.rob">
+<param name="Local" value="sw.rob.html">
+</OBJECT>
+<LI> <OBJECT type="text/sitemap">
+<param name="Name" value="sw.threshold">
+<param name="Local" value="sw.threshold.html">
+</OBJECT>
+</UL>
+<LI> <OBJECT type="text/sitemap">
+<param name="Name" value="Package cgh:  Titles">
+</OBJECT>
+<UL>
+<LI> <OBJECT type="text/sitemap">
+<param name="Name" value="Perform the Smith-Waterman Algorithm">
+<param name="Local" value="sw.html">
+</OBJECT>
+<LI> <OBJECT type="text/sitemap">
+<param name="Name" value="Permutation Test for Smith-Waterman Algorithm">
+<param name="Local" value="sw.perm.test.html">
+</OBJECT>
+<LI> <OBJECT type="text/sitemap">
+<param name="Name" value="Plot Results of Smith-Waterman Algorithm">
+<param name="Local" value="sw.plot.html">
+</OBJECT>
+<LI> <OBJECT type="text/sitemap">
+<param name="Name" value="Robustness Calculation for Smith-Waterman Algorithm">
+<param name="Local" value="sw.rob.html">
+</OBJECT>
+<LI> <OBJECT type="text/sitemap">
+<param name="Name" value="Threshold function">
+<param name="Local" value="sw.threshold.html">
+</OBJECT>
+</UL>
+</UL>
+</BODY></HTML>

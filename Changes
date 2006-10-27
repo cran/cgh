@@ -1,0 +1,10 @@
+1.0-1:  
+	- Fixed type of swR_names so runs in R >= 2.4.0
+	- Rearranged some directories under inst to conform
+	  to conventions.
+	- Placed chm and check directories unders inst. The chm will be
+	  created for Windows in CRAN. Needed to rename both, otherwise
+	  the two directories were deleted.
+	- Removed .so, .o, and .dll from src, as well as Makefile.
+	- Fixed newlines of sw.c (now Unix style, so no warnings with 
+	  check).

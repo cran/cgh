@@ -1,0 +1,310 @@
+
+R : Copyright 2004, The R Foundation for Statistical Computing
+Version 2.0.1  (2004-11-15), ISBN 3-900051-07-0
+
+R is free software and comes with ABSOLUTELY NO WARRANTY.
+You are welcome to redistribute it under certain conditions.
+Type 'license()' or 'licence()' for distribution details.
+
+R is a collaborative project with many contributors.
+Type 'contributors()' for more information and
+'citation()' on how to cite R or R packages in publications.
+
+Type 'demo()' for some demos, 'help()' for on-line help, or
+'help.start()' for a HTML browser interface to help.
+Type 'q()' to quit R.
+
+> ### * <HEADER>
+> ###
+> attach(NULL, name = "CheckExEnv")
+> assign(".CheckExEnv", as.environment(2), pos = length(search())) # base
+> ## add some hooks to label plot pages for base and grid graphics
+> setHook("plot.new", ".newplot.hook")
+> setHook("persp", ".newplot.hook")
+> setHook("grid.newpage", ".gridplot.hook")
+> 
+> assign("cleanEx",
++        function(env = .GlobalEnv) {
++ 	   rm(list = ls(envir = env, all.names = TRUE), envir = env)
++            RNGkind("default", "default")
++ 	   set.seed(1)
++    	   options(warn = 1)
++ 	   assign("T", delay(stop("T used instead of TRUE")),
++ 		  pos = .CheckExEnv)
++ 	   assign("F", delay(stop("F used instead of FALSE")),
++ 		  pos = .CheckExEnv)
++ 	   sch <- search()
++ 	   newitems <- sch[! sch %in% .oldSearch]
++ 	   for(item in rev(newitems))
++                eval(substitute(detach(item), list(item=item)))
++ 	   missitems <- .oldSearch[! .oldSearch %in% sch]
++ 	   if(length(missitems))
++ 	       warning("items ", paste(missitems, collapse=", "),
++ 		       " have been removed from the search path")
++        },
++        env = .CheckExEnv)
+> assign("..nameEx", "__{must remake R-ex/*.R}__", env = .CheckExEnv) # for now
+> assign("ptime", proc.time(), env = .CheckExEnv)
+> grDevices::postscript("cgh-Examples.ps")
+> assign("par.postscript", graphics::par(no.readonly = TRUE), env = .CheckExEnv)
+> options(contrasts = c(unordered = "contr.treatment", ordered = "contr.poly"), pager="console")
+> library('cgh')
+> 
+> assign(".oldSearch", search(), env = .CheckExEnv)
+> assign(".oldNS", loadedNamespaces(), env = .CheckExEnv)
+> cleanEx(); ..nameEx <- "sw"
+> 
+> ### * sw
+> 
+> flush(stderr()); flush(stdout())
+> 
+> ### Name: sw
+> ### Title: Perform the Smith-Waterman Algorithm
+> ### Aliases: sw
+> ### Keywords: misc
+> 
+> ### ** Examples
+> 
+> ## simluate vector of logratios
+> set.seed(3)
+> logratio <- c(rnorm(20) - 1, rnorm(20))
+> 
+> ## invert sign of values and subtract threshold to ensure negative mean
+> x <- sw.threshold(logratio, function(x) median(x) + .2 * mad(x), sign = -1)
+> 
+> ## perform Smith-Waterman algorithm
+> sw(x, trace = TRUE)
+Input vector:
+   0>   0.9560  0.2866 -0.2647  1.1462 -0.2017 -0.0361 -0.0914 -1.1225  1.2129 -1.2733
+  10>   0.7388  1.1253  0.7104 -0.2586 -0.1580  0.3017  0.9471  0.6423 -1.2303 -0.2057
+  20>  -0.4275 -0.0636 -0.8022  0.6605 -0.5215 -0.2649 -2.1666 -2.0180 -0.9339  0.1308
+  30>  -1.9066 -1.8577 -1.7337 -1.7424 -0.6538 -1.7115 -2.3063 -1.0442 -0.0267 -1.7997
+
+Running totals:
+   0>   0.9560  1.2426  0.9779  2.1241  1.9223  1.8863  1.7949  0.6724  1.8853  0.6120
+  10>   1.3508  2.4761  3.1865  2.9279  2.7700  3.0717  4.0188  4.6611  3.4308  3.2251
+  20>   2.7976  2.7340  1.9318  2.5923  2.0708  1.8060  0.0000  0.0000  0.0000  0.1308
+  30>   0.0000  0.0000  0.0000  0.0000  0.0000  0.0000  0.0000  0.0000  0.0000  0.0000
+
+$x
+ [1]  0.95599660  0.28658891 -0.26472503  1.14619507 -0.20171964 -0.03606076
+ [7] -0.09135455 -1.12254703  1.21292060 -1.27330554  0.73884478  1.12528175
+[13]  0.71042167 -0.25858919 -0.15798252  0.30171961  0.94708051  0.64230600
+[19] -1.23025044 -0.20574842 -0.42745309 -0.06363608 -0.80220864  0.66053802
+[25] -0.52148171 -0.26486416 -2.16655260 -2.01800394 -0.93385834  0.13084548
+[31] -1.90656155 -1.85770726 -1.73365199 -1.74243896 -0.65380720 -1.71145233
+[37] -2.30629481 -1.04418883 -0.02665305 -1.79969805
+
+$s
+ [1] 0.9559966 1.2425855 0.9778605 2.1240555 1.9223359 1.8862751 1.7949206
+ [8] 0.6723736 1.8852942 0.6119886 1.3508334 2.4761152 3.1865368 2.9279476
+[15] 2.7699651 3.0716847 4.0187652 4.6610712 3.4308208 3.2250724 2.7976193
+[22] 2.7339832 1.9317746 2.5923126 2.0708309 1.8059667 0.0000000 0.0000000
+[29] 0.0000000 0.1308455 0.0000000 0.0000000 0.0000000 0.0000000 0.0000000
+[36] 0.0000000 0.0000000 0.0000000 0.0000000 0.0000000
+
+$score
+[1] 4.6610712 0.6605380 0.1308455
+
+$start
+[1]  1 24 30
+
+$length
+[1] 18  1  1
+
+>   
+> 
+> 
+> cleanEx(); ..nameEx <- "sw.perm.test"
+> 
+> ### * sw.perm.test
+> 
+> flush(stderr()); flush(stdout())
+> 
+> ### Name: sw.perm.test
+> ### Title: Permutation Test for Smith-Waterman Algorithm
+> ### Aliases: sw.perm.test
+> ### Keywords: misc
+> 
+> ### ** Examples
+> 
+> ## simluate vector of logratios
+> set.seed(3)
+> logratio <- c(rnorm(20) - 1, rnorm(20))
+> 
+> ## invert sign of values and subtract threshold to ensure negative mean
+> x <- sw.threshold(logratio, function(x) median(x) + .2 * mad(x), -1)
+> 
+> ## perform Smith-Waterman
+> sw(x)
+$x
+ [1]  0.95599660  0.28658891 -0.26472503  1.14619507 -0.20171964 -0.03606076
+ [7] -0.09135455 -1.12254703  1.21292060 -1.27330554  0.73884478  1.12528175
+[13]  0.71042167 -0.25858919 -0.15798252  0.30171961  0.94708051  0.64230600
+[19] -1.23025044 -0.20574842 -0.42745309 -0.06363608 -0.80220864  0.66053802
+[25] -0.52148171 -0.26486416 -2.16655260 -2.01800394 -0.93385834  0.13084548
+[31] -1.90656155 -1.85770726 -1.73365199 -1.74243896 -0.65380720 -1.71145233
+[37] -2.30629481 -1.04418883 -0.02665305 -1.79969805
+
+$s
+ [1] 0.9559966 1.2425855 0.9778605 2.1240555 1.9223359 1.8862751 1.7949206
+ [8] 0.6723736 1.8852942 0.6119886 1.3508334 2.4761152 3.1865368 2.9279476
+[15] 2.7699651 3.0716847 4.0187652 4.6610712 3.4308208 3.2250724 2.7976193
+[22] 2.7339832 1.9317746 2.5923126 2.0708309 1.8059667 0.0000000 0.0000000
+[29] 0.0000000 0.1308455 0.0000000 0.0000000 0.0000000 0.0000000 0.0000000
+[36] 0.0000000 0.0000000 0.0000000 0.0000000 0.0000000
+
+$score
+[1] 4.6610712 0.6605380 0.1308455
+
+$start
+[1]  1 24 30
+
+$length
+[1] 18  1  1
+
+> 
+> ## perform permutation test on the islands identified
+> sw.perm.test(x, max.nIslands = NULL, nIter= 1e4)
+[1] 0.0196 1.0000 1.0000
+>   
+> 
+> 
+> cleanEx(); ..nameEx <- "sw.plot"
+> 
+> ### * sw.plot
+> 
+> flush(stderr()); flush(stdout())
+> 
+> ### Name: sw.plot
+> ### Title: Plot Results of Smith-Waterman Algorithm
+> ### Aliases: sw.plot
+> ### Keywords: misc
+> 
+> ### ** Examples
+> 
+> ## simluate vector of logratios
+> set.seed(3)
+> logratio <- c(rnorm(20) - 1, rnorm(20))
+> 
+> ## invert sign of values and subtract threshold to ensure negative mean
+> x <- sw.threshold(logratio, function(x) median(x) + .2 * mad(x), -1)
+> 
+> ## perform permuation test for islands identified
+> p <- sw.perm.test(x, max.nIslands = NULL, nIter = 1e4)
+> 
+> ## calculate robustness scores
+> r <- sw.rob(x)
+> 
+> ## plot results
+> sw.plot(logratio, seq(length(logratio)),
++   function(x) median(x) + .2 * mad(x), sign = -1, rob = r,
++   main = paste("Toy dataset, highest-scoring island p =", p[1]))
+>   
+> 
+> 
+> cleanEx(); ..nameEx <- "sw.rob"
+> 
+> ### * sw.rob
+> 
+> flush(stderr()); flush(stdout())
+> 
+> ### Name: sw.rob
+> ### Title: Robustness Calculation for Smith-Waterman Algorithm
+> ### Aliases: sw.rob
+> ### Keywords: misc
+> 
+> ### ** Examples
+> 
+> 
+> ## simluate vector of logratios
+> set.seed(3)
+> logratio <- c(rnorm(20) - 1, rnorm(20))
+> 
+> ## invert sign of values and subtract threshold to ensure negative mean
+> x <- sw.threshold(logratio, function(x) median(x) + .2 * mad(x), -1)
+> 
+> ## calculate robustness values
+> sw.rob(x)
+ [1] 0.62 0.62 0.62 0.62 0.62 0.62 0.62 0.62 0.62 0.62 1.00 1.00 1.00 1.00 1.00
+[16] 1.00 1.00 1.00 0.00 0.00 0.00 0.00 0.00 0.00 0.00 0.00 0.00 0.00 0.00 0.00
+[31] 0.00 0.00 0.00 0.00 0.00 0.00 0.00 0.00 0.00 0.00
+>   
+> 
+> 
+> cleanEx(); ..nameEx <- "sw.threshold"
+> 
+> ### * sw.threshold
+> 
+> flush(stderr()); flush(stdout())
+> 
+> ### Name: sw.threshold
+> ### Title: Threshold function
+> ### Aliases: sw.threshold
+> ### Keywords: misc
+> 
+> ### ** Examples
+> 
+> ## simluate vector of logratios
+> set.seed(3)
+> logratio <- c(rnorm(20) - 1, rnorm(20))
+> 
+> ## invert sign of values and subtract threshold to ensure negative mean
+> x <- sw.threshold(logratio, function(x) median(x) + .2 * mad(x), sign = -1)
+> 
+> ## perform Smith-Waterman algorithm
+> sw(x, trace = TRUE)
+Input vector:
+   0>   0.9560  0.2866 -0.2647  1.1462 -0.2017 -0.0361 -0.0914 -1.1225  1.2129 -1.2733
+  10>   0.7388  1.1253  0.7104 -0.2586 -0.1580  0.3017  0.9471  0.6423 -1.2303 -0.2057
+  20>  -0.4275 -0.0636 -0.8022  0.6605 -0.5215 -0.2649 -2.1666 -2.0180 -0.9339  0.1308
+  30>  -1.9066 -1.8577 -1.7337 -1.7424 -0.6538 -1.7115 -2.3063 -1.0442 -0.0267 -1.7997
+
+Running totals:
+   0>   0.9560  1.2426  0.9779  2.1241  1.9223  1.8863  1.7949  0.6724  1.8853  0.6120
+  10>   1.3508  2.4761  3.1865  2.9279  2.7700  3.0717  4.0188  4.6611  3.4308  3.2251
+  20>   2.7976  2.7340  1.9318  2.5923  2.0708  1.8060  0.0000  0.0000  0.0000  0.1308
+  30>   0.0000  0.0000  0.0000  0.0000  0.0000  0.0000  0.0000  0.0000  0.0000  0.0000
+
+$x
+ [1]  0.95599660  0.28658891 -0.26472503  1.14619507 -0.20171964 -0.03606076
+ [7] -0.09135455 -1.12254703  1.21292060 -1.27330554  0.73884478  1.12528175
+[13]  0.71042167 -0.25858919 -0.15798252  0.30171961  0.94708051  0.64230600
+[19] -1.23025044 -0.20574842 -0.42745309 -0.06363608 -0.80220864  0.66053802
+[25] -0.52148171 -0.26486416 -2.16655260 -2.01800394 -0.93385834  0.13084548
+[31] -1.90656155 -1.85770726 -1.73365199 -1.74243896 -0.65380720 -1.71145233
+[37] -2.30629481 -1.04418883 -0.02665305 -1.79969805
+
+$s
+ [1] 0.9559966 1.2425855 0.9778605 2.1240555 1.9223359 1.8862751 1.7949206
+ [8] 0.6723736 1.8852942 0.6119886 1.3508334 2.4761152 3.1865368 2.9279476
+[15] 2.7699651 3.0716847 4.0187652 4.6610712 3.4308208 3.2250724 2.7976193
+[22] 2.7339832 1.9317746 2.5923126 2.0708309 1.8059667 0.0000000 0.0000000
+[29] 0.0000000 0.1308455 0.0000000 0.0000000 0.0000000 0.0000000 0.0000000
+[36] 0.0000000 0.0000000 0.0000000 0.0000000 0.0000000
+
+$score
+[1] 4.6610712 0.6605380 0.1308455
+
+$start
+[1]  1 24 30
+
+$length
+[1] 18  1  1
+
+>   
+> 
+> 
+> ### * <FOOTER>
+> ###
+> cat("Time elapsed: ", proc.time() - get("ptime", env = .CheckExEnv),"\n")
+Time elapsed:  0.21 0.02 0.23 NA NA 
+> grDevices::dev.off()
+null device 
+          1 
+> ###
+> ### Local variables: ***
+> ### mode: outline-minor ***
+> ### outline-regexp: "\\(> \\)?### [*]+" ***
+> ### End: ***
+> quit('no')

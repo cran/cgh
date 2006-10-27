@@ -1,0 +1,10 @@
+useDynLib( cgh )
+
+exportPattern( sw, rel, perm.test, island.plot, plot.rel, plot.ratio, fill.block )
+
+
+
+
+
+
+
