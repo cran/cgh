@@ -30,6 +30,10 @@
   Smith TF, Waterman MS.
   Identification of common molecular subsequences.
   J Mol Biol. 1981;147(1):195-7.
+
+  Price TS, et al.
+  SW-ARRAY: a dynamic programming solution for the identification of copy-number changes in genomic DNA using array comparative genome hybridization data.
+  Nucl Acids Res. 2005;33(11):3455-3464.
   }
 \author{T.S.Price}
 \seealso{

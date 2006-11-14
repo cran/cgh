@@ -10,7 +10,7 @@
 \usage{
   sw.plot(logratio, location = seq(length(logratio)),
     threshold.func = function(x) median(x) + .2 * mad(x),
-    sign = -1, highest = TRUE, expected = NULL, rob = NULL, legend = TRUE, 
+    sign = -1, highest = TRUE, expected = NULL, rob = NULL, legend = TRUE,
     xlab = "Chromosomal location", ylab = "Intensity log ratio", ...)
   }
 \arguments{
@@ -27,6 +27,11 @@
   \item{\dots}{other arguments passed to the 'plot' function}
   }
 \author{T.S.Price}
+\references{
+  Price TS, et al.
+  SW-ARRAY: a dynamic programming solution for the identification of copy-number changes in genomic DNA using array comparative genome hybridization data.
+  Nucl Acids Res. 2005;33(11):3455-3464.
+  }
 \seealso{
   \code{\link{sw}}
   \code{\link{sw.threshold}}

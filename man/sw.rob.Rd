@@ -25,6 +25,11 @@
     island.}
 \value{A vector of robustness values equal in length to the input vector.}
 \author{T.S.Price}
+\references{
+  Price TS, et al.
+  SW-ARRAY: a dynamic programming solution for the identification of copy-number changes in genomic DNA using array comparative genome hybridization data.
+  Nucl Acids Res. 2005;33(11):3455-3464.
+  }
 \seealso{
   \code{\link{sw}}
   }
