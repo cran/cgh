@@ -7,7 +7,7 @@
 # R 1.9.1 script
 #
 # (c) T.S.Price
-# August 2004
+# 2004-2008
 
 
 ###############################################################################################
@@ -59,7 +59,7 @@ function( logratio, threshold.func = function( x ) median( x ) + .2 * mad( x ), 
 sw.plot <-
 function( logratio, location = seq( length( logratio ) ),
     threshold.func = function( x ) median( x ) + .2 * mad( x ),
-    sign = -1, highest = TRUE, expected = NULL, rob = NULL, legend = TRUE, 
+    sign = -1, highest = TRUE, expected = NULL, rob = NULL, legend = TRUE,
     xlab = "Chromosomal location", ylab = "Intensity log ratio", ... )
 {
     my.line <-
@@ -140,7 +140,7 @@ function( logratio, location = seq( length( logratio ) ),
         my.line(
             y = ( maxlr - minlr ) * rob + minlr,
             x = location,
-            col = "#99ffff" )		
+            col = "#99ffff" )
     }
 
     # highest scoring island
@@ -174,7 +174,7 @@ function( logratio, location = seq( length( logratio ) ),
         sel <- c( TRUE, highest, !is.null( expected ), !is.null( rob ) )
         legend.str <- c( "threshold value", "highest-scoring island", "expected values", "robustness" )
         legend.col <- c( "#00ff00", "#0000ff", "#ff0000", "#99ffff" )
-        legend( location[ 1 ], minlr + ( maxlr - minlr ) * .25, legend.str[ sel ], 
+        legend( location[ 1 ], minlr + ( maxlr - minlr ) * .25, legend.str[ sel ],
             lty = rep( 1, sum( sel ) ), col = legend.col[ sel ], cex = 0.8 )
     }
 

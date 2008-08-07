@@ -2,7 +2,7 @@
 // to detect copy number changes
 // in microarray CGH data
 
-// T.S.Price Feb 2004
+// T.S.Price 2004-2008
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -644,12 +644,12 @@ sw_permTest( SEXP xR, SEXP max_iR, SEXP nItR, SEXP seedR, SEXP traceR,
     PutRNGstate();
   }
 
-  // divide p by `nIter' to get permutation p-values
+  // divide ( p + 1 ) by ( nIter + 1 ) to get permutation p-values
   // convert to R numeric vector `pValR' and return
   PROTECT( pValR = allocVector( REALSXP, ni ) );
   pVal = REAL( pValR );
   for ( i = 0; i < ni; i++ ) {
-    pVal[ i ] = ( double ) p[ i ] / ( double ) nIter;
+    pVal[ i ] = ( ( double ) p[ i ] + 1.0 ) / ( ( double ) nIter + 1.0 );
   }
   UNPROTECT( 1 );
   return pValR;
