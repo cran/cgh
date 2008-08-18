@@ -42,15 +42,15 @@ typedef struct iarray *Iarray;
 
 
 
-extern Iarray iarray_init( int length );
-extern void iarray_pushback( Iarray i, Island j );
-extern void iarray_print( Iarray i );
-extern int iarray_top( Iarray i );
-extern Island iarray_element( Iarray i, int element );
-extern Island island_new( double score, int start, int length );
-extern double island_score( Island j );
-extern int island_start( Island j );
-extern int island_length( Island j );
+extern inline Iarray iarray_init( int length );
+extern inline void iarray_pushback( Iarray i, Island j );
+extern inline void iarray_print( Iarray i );
+extern inline int iarray_top( Iarray i );
+extern inline Island iarray_element( Iarray i, int element );
+extern inline Island island_new( double score, int start, int length );
+extern inline double island_score( Island j );
+extern inline int island_start( Island j );
+extern inline int island_length( Island j );
 
 
 
@@ -146,18 +146,17 @@ struct vector {
 typedef struct vector *Vector;
 
 
-extern double vector_element( Vector v, int index );
-extern void vector_setElement( Vector v, int index, double element );
-extern int vector_length( Vector v );
-extern void vector_setLength( Vector v, int len );
-extern void vector_copy( Vector x, Vector y );
-extern void vector_REALcopy( double *r, Vector v );
-extern void vector_copyArray( Vector v, double *array );
-extern void vector_copyLongIntArray( Vector v, long int *array );
-extern Vector vector_init( int len );
-extern void vector_print( Vector v );
-extern void vector_printInt( Vector v );
-
+extern inline double vector_element( Vector v, int index );
+extern inline void vector_setElement( Vector v, int index, double element );
+extern inline int vector_length( Vector v );
+extern inline void vector_setLength( Vector v, int len );
+extern inline void vector_copy( Vector x, Vector y );
+extern inline void vector_REALcopy( double *r, Vector v );
+extern inline void vector_copyArray( Vector v, double *array );
+extern inline void vector_copyLongIntArray( Vector v, long int *array );
+extern inline Vector vector_init( int len );
+extern inline void vector_print( Vector v );
+extern inline void vector_printInt( Vector v );
 
 double
 vector_element( Vector v, int index )
@@ -285,9 +284,10 @@ vector_printInt( Vector v )
 
 // Smith-Waterman algorithm
 
-extern void sw_scores( Vector s, Vector x );
-extern Island sw_top_island( Vector x );
-extern void sw_loop( Iarray results, Vector x, int max_i );
+extern inline void sw_scores( Vector s, Vector x );
+extern inline Island sw_top_island( Vector x );
+extern inline double sw_top_island_score( Vector x );
+extern inline void sw_loop( Iarray results, Vector x, int max_i );
 
 
 // calculate partial sums s from scores x
@@ -310,7 +310,7 @@ sw_top_island( Vector x )
   int z = -1;             // location of last zero
   int b = -1;             // location of last zero before maximum
   int e = -1;             // location of maximum
-  double m = 0.0;           // maximum
+  double m = 0.0;         // maximum
   int len = vector_length( x );
   int i;
   double temp;
@@ -334,6 +334,31 @@ sw_top_island( Vector x )
 
   // save details of island: score = m == 0.0 if no island
   return island_new( m, b + 1, e - b );
+}
+
+// identify top island score in input vector
+double
+sw_top_island_score( Vector x )
+{
+  double m = 0.0;         // maximum
+  int len = vector_length( x );
+  int i;
+  double temp;
+  Vector s = vector_init( len );
+
+  // calculate partial sums
+  sw_scores( s, x );
+
+  // find highest scoring island
+  for ( i = 0; i < len; i++ ) {
+    temp = vector_element( s, i );
+    if ( temp > m ) {
+      m = temp;
+      }
+    }
+
+  // return score = m == 0.0 if no island
+  return m;
 }
 
 void
@@ -460,8 +485,8 @@ sw( SEXP xR, SEXP max_iR, SEXP traceR )
 
   // run Smith-Waterman algorithm and print results
   sw_loop( sw_results, x, mi );
-  /* Rprintf( "\nSmith-Waterman algorithm results:\n" );   */
-  /* iarray_print( sw_results );               */
+  /* Rprintf( "\nSmith-Waterman algorithm results:\n" );    */
+  /* iarray_print( sw_results );                            */
 
   // convert results to R format and return
   top = iarray_top( sw_results );
@@ -494,6 +519,7 @@ sw( SEXP xR, SEXP max_iR, SEXP traceR )
 
 
 // R interface for permutation test
+// optimized for speed and memory usage in version 1.0-5
 
 extern SEXP sw_permTest( SEXP xR, SEXP max_iR, SEXP nItR, SEXP seedR,
   SEXP traceR, SEXP envR );
@@ -510,9 +536,9 @@ sw_permTest( SEXP xR, SEXP max_iR, SEXP nItR, SEXP seedR, SEXP traceR,
   long int loop;
   long int nIter = INTEGER( coerceVector( nItR, INTSXP ) )[ 0 ];
   long int *p;
-  double temp, *x_perm, *i_scores, *pVal;
+  double temp, *x_perm, *score, *i_scores, *pVal;
   Vector x_p, q;
-  Island j;
+  double j;
   SEXP swR, pValR, tempR, runifR, s, t;
   if ( TYPEOF( seedR ) == NILSXP ) {
     nullseed = 1;
@@ -525,7 +551,7 @@ sw_permTest( SEXP xR, SEXP max_iR, SEXP nItR, SEXP seedR, SEXP traceR,
   PROTECT( swR = allocVector( VECSXP, 5 ) );
   swR = sw( xR, max_iR, traceR );
   x_perm = ( double * ) S_alloc( len, sizeof( double ) );
-  x_p = vector_init( len );
+  score = ( double * ) S_alloc( len, sizeof( double ) );
   for ( i = 0; i < len; i++ ) {
     x_perm[ i ] = REAL( xR )[ i ];
   }
@@ -538,14 +564,14 @@ sw_permTest( SEXP xR, SEXP max_iR, SEXP nItR, SEXP seedR, SEXP traceR,
     p[ i ] = 0.0;
     i_scores[ i ] = REAL( VECTOR_ELT( swR, 2 ) )[ i ];
   }
-  UNPROTECT( 1 );
+  UNPROTECT( 1 ); // swR
 
   if ( trace ) {
     Rprintf( "`nIter' == %d\n", nIter );
   }
   if ( nIter <= 0 ) {
     PROTECT( pValR = allocVector( NILSXP, 1 ) );
-    UNPROTECT( 1 );
+    UNPROTECT( 1 ); // pValR
     return pValR;
   }
 
@@ -567,10 +593,12 @@ sw_permTest( SEXP xR, SEXP max_iR, SEXP nItR, SEXP seedR, SEXP traceR,
     SETCAR( t, kindR );
     SET_TAG( t, install( "kind" ) );
     tempR = eval( s, envR );
-    UNPROTECT( 2 );
+    UNPROTECT( 2 ); // t, s, kindR
   }
 
   // loop over `nIter' permutations of xR
+  PROTECT( t = s = allocList( 3 ) );
+  PROTECT( runifR = allocVector( REALSXP, len ) );
   for ( loop = 0; loop++ < nIter; ) {
 
     if ( trace ) {
@@ -589,9 +617,8 @@ sw_permTest( SEXP xR, SEXP max_iR, SEXP nItR, SEXP seedR, SEXP traceR,
     }
     else {
       // generate vector of random numbers
-      PROTECT( t = s = allocList( 3 ) );
       SET_TYPEOF( s, LANGSXP );
-      SETCAR(t, install( "runif" ) );
+      SETCAR( t, install( "runif" ) );
       t = CDR( t );
       SETCAR( t, allocVector( INTSXP, 1 ) );
       INTEGER( CAR( t ) )[ 0 ] = len;
@@ -600,9 +627,7 @@ sw_permTest( SEXP xR, SEXP max_iR, SEXP nItR, SEXP seedR, SEXP traceR,
       SETCAR( t, allocVector( INTSXP, 1 ) );
       INTEGER( CAR( t ) )[ 0 ] = len;
       SET_TAG( t, install( "max" ) );
-      PROTECT( runifR = allocVector( REALSXP, len ) );
       runifR = eval( s, envR );
-      UNPROTECT( 1 );
 
       // generate permutation of xR
       // by swapping each element of `x_perm' in turn
@@ -613,21 +638,33 @@ sw_permTest( SEXP xR, SEXP max_iR, SEXP nItR, SEXP seedR, SEXP traceR,
         x_perm[ m++ ] = x_perm[ n ];
         x_perm[ n ] = temp;
       }
-      UNPROTECT( 1 );
     }
 
     // do Smith-Waterman algorithm on permuted data
-    vector_copyArray( x_p, x_perm );
-    j = sw_top_island( x_p );
+    // calculate partial sums
+    score[ 0 ] = MAX( x_perm[ 0 ], 0.0 );
+    for ( i = 1; i < len; i++ ) {
+      score[ i ] = MAX( score[ i - 1 ] + x_perm[ i ], 0.0 );
+    }
+
+    // find highest scoring island
+    j = 0.0; // maximum
+    for ( i = 0; i < len; i++ ) {
+      temp = score[ i ];
+      if ( temp > j ) {
+        j = temp;
+      }
+    }
+    // j == 0.0 if no island
 
     if ( trace ) {
-      Rprintf( "%9f %6d %6d", island_score( j ), island_start( j ), island_length( j ) );
+      Rprintf( "%9f", j );
     }
 
     // compare score for top island in permuted data
     // with scores from the extracted islands
     for ( i = 0; i < ni; i++ ) {
-      if ( island_score( j ) > i_scores[ i ] ) {
+      if ( j > i_scores[ i ] ) {
         for ( m = i; m < ni; ) {
           ++p[ m++ ];
         }
@@ -639,6 +676,7 @@ sw_permTest( SEXP xR, SEXP max_iR, SEXP nItR, SEXP seedR, SEXP traceR,
       vector_printInt( q );
     }
   }
+  UNPROTECT( 2 ); // t, s, runifR
 
   if ( nullseed ) {
     PutRNGstate();
@@ -651,7 +689,7 @@ sw_permTest( SEXP xR, SEXP max_iR, SEXP nItR, SEXP seedR, SEXP traceR,
   for ( i = 0; i < ni; i++ ) {
     pVal[ i ] = ( ( double ) p[ i ] + 1.0 ) / ( ( double ) nIter + 1.0 );
   }
-  UNPROTECT( 1 );
+  UNPROTECT( 1 ); // pValR
   return pValR;
 }
 

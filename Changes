@@ -14,6 +14,9 @@
   - author emailaddress and website updated
   - recompiled under R 2.7.0 using Rtools28 from http://www.murdoch-sutherland.com/Rtools/
 1.0-4:
-  - changed default number of permutations R to 999 from 1000
   - changed calculation of permutation p values to ( number of times test score is exceeded + 1 ) / ( R + 1 )
+  - recompiled under R 2.7.1 using Rtools28 from http://www.murdoch-sutherland.com/Rtools/
+1.0-5:
+  - changed default number of permutations R to 999 from 1000
+  - C code for permutation test optimized for speed and memory usage
   - recompiled under R 2.7.1 using Rtools28 from http://www.murdoch-sutherland.com/Rtools/
