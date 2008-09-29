@@ -20,3 +20,6 @@
   - changed default number of permutations R to 999 from 1000
   - C code for permutation test optimized for speed and memory usage
   - recompiled under R 2.7.1 using Rtools28 from http://www.murdoch-sutherland.com/Rtools/
+1.0-6:
+  - updated contact details
+  - recompiled under R 2.7.2 using Rtools28 from http://www.murdoch-sutherland.com/Rtools/
