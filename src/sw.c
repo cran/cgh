@@ -426,7 +426,7 @@ sw( SEXP xR, SEXP max_iR, SEXP traceR )
       max_iR = coerceVector( max_iR, INTSXP );
     }
     mi = INTEGER( max_iR )[ 0 ];
-    if ( ( ISNAN( mi ) ) || ( !R_FINITE( mi ) ) )
+    if ( mi == NA_INTEGER )
       mi = 0;
     }
 
@@ -455,7 +455,7 @@ sw( SEXP xR, SEXP max_iR, SEXP traceR )
   // checking for missing or infinite values
   for ( i = 0; i < len; i++ ) {
     temp = REAL( xR )[ i ];
-    if ( ( ISNAN( temp ) ) || ( !R_FINITE( temp ) ) ) {
+    if ( !R_FINITE( temp ) ) {
       REprintf( "NaN / infinite value in input vector\n" );
     }
     vector_setElement( x, i, temp );
