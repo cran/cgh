@@ -15,7 +15,6 @@
     random number generator that cannot be seeded}
   \item{trace}{print verbose output if TRUE}
   }
-\details{}
 \value{A vector of probability values, calculated as the proportion of instances for which
   performing the Smith-Waterman algorithm on random permutations of the data
   identifies a higher-scoring island than the islands identified when the algorithm

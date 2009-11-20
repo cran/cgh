@@ -537,7 +537,7 @@ sw_permTest( SEXP xR, SEXP max_iR, SEXP nItR, SEXP seedR, SEXP traceR,
   long int nIter = INTEGER( coerceVector( nItR, INTSXP ) )[ 0 ];
   long int *p;
   double temp, *x_perm, *score, *i_scores, *pVal;
-  Vector x_p, q;
+  Vector q;
   double j;
   SEXP swR, pValR, tempR, runifR, s, t;
   if ( TYPEOF( seedR ) == NILSXP ) {

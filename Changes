@@ -23,3 +23,7 @@
 1.0-6:
   - updated contact details
   - recompiled under R 2.7.2 using Rtools28 from http://www.murdoch-sutherland.com/Rtools/
+1.0-7:
+  - updated contact details
+  - recompiled under R 2.10.0 using Rtools210 from http://www.murdoch-sutherland.com/Rtools/
+
